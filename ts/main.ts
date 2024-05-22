@@ -1,18 +1,22 @@
 window.onload = function() {
     let submitTaskButton: HTMLButtonElement = document.querySelector("#task-submit-btn") as HTMLButtonElement;
     submitTaskButton.onclick = function() {
-        addTask();
+        validateAndCreateTask();
     }
+
+    // Load tasks from local storage
+    loadTasksFromLocalStorage();
 }
 
 /**
  * If the task is valid, add it to the local storage
  */
-function addTask() {
+function validateAndCreateTask() {
     let task: Task|null = validateTask();
 
     if (task != null){
         addTaskToLocalStorage(task);
+        loadTasksFromLocalStorage();
     }
 }
 
@@ -33,7 +37,6 @@ function validateTask(): Task|null{
     }
     else {
         let newTask = new Task(taskName);
-        // newTask.name = taskName;
         return newTask;
     }
 }
@@ -57,4 +60,50 @@ function addTaskToLocalStorage(t: Task) {
     // Add to localStorage
     taskData = JSON.stringify(tasks);
     localStorage.setItem(taskStorageKey, taskData);
+}
+
+function loadTasksFromLocalStorage() {
+    const taskStorageKey = "Tasks";
+    let taskData = localStorage.getItem(taskStorageKey);
+    let tasks: Task[] = taskData ? JSON.parse(taskData) : [];
+
+    // Add each task to the webpage
+    for (let task of tasks) {
+        addTaskToWebpage(task);
+    }
+}
+
+/**
+ * Adds a task object to the webpage. Assumes all data is valid.
+ * @param task The task to add to the webpage
+ */
+function addTaskToWebpage(task: Task) {
+    // add the task to the ul
+    let ul = document.querySelector("#task-list");
+
+    // Create a new li
+    let li = document.createElement("li");
+
+    // add a class to the li
+    li.classList.add("list-group-item");
+
+    // Create a new input element type checkbox
+    let taskCheckbox = document.createElement("input");
+
+    // Set the input type to checkbox
+    taskCheckbox.setAttribute("type", "checkbox");
+
+    // Set the input class task-checkbox
+    taskCheckbox.classList.add("task-checkbox");
+
+    // Add the checkbox to the li
+    li.appendChild(taskCheckbox);
+
+    // Add the task name to the li
+    let taskNameNode = document.createTextNode(" " + task.name);
+    li.appendChild(taskNameNode);
+
+    
+    // Add the li to the ul
+    ul.appendChild(li);
 }
