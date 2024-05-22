@@ -62,14 +62,19 @@ function addTaskToLocalStorage(t: Task) {
     localStorage.setItem(taskStorageKey, taskData);
 }
 
+
 function loadTasksFromLocalStorage() {
     const taskStorageKey = "Tasks";
     let taskData = localStorage.getItem(taskStorageKey);
     let tasks: Task[] = taskData ? JSON.parse(taskData) : [];
 
     // Add each task to the webpage
-    for (let task of tasks) {
-        addTaskToWebpage(task);
+    for (let i : number = 0; i < tasks.length; i++) {
+        // Create a new task object from the JSON data
+        let task = new Task(tasks[i].name);
+
+        // Add the task to the webpage
+        addTaskToWebpage(task, i);
     }
 }
 
@@ -77,7 +82,7 @@ function loadTasksFromLocalStorage() {
  * Adds a task object to the webpage. Assumes all data is valid.
  * @param task The task to add to the webpage
  */
-function addTaskToWebpage(task: Task) {
+function addTaskToWebpage(task: Task, index: number) {
     // add the task to the ul
     let ul = document.querySelector("#task-list");
 
@@ -95,6 +100,17 @@ function addTaskToWebpage(task: Task) {
 
     // Set the input class task-checkbox
     taskCheckbox.classList.add("task-checkbox");
+
+    // Add onchange event to the checkbox
+    taskCheckbox.onchange = function() {
+        task.complete(taskCheckbox.checked);
+        if (task.completed) {
+            li.style.color = "gray";
+
+        } else {
+            li.style.color = "black";
+        }
+    };
 
     // Add the checkbox to the li
     li.appendChild(taskCheckbox);

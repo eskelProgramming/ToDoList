@@ -7,8 +7,8 @@ class Task {
         this.completed = false;
     }
 
-    complete() {
+    complete(isComplete: boolean) {
         console.log('Completing task: ' + this.name);
-        this.completed = true;
+        this.completed = isComplete;
     }
 }
