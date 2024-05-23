@@ -101,20 +101,22 @@ function addTaskToWebpage(task: Task, index: number) {
     // Set the input class task-checkbox
     taskCheckbox.classList.add("task-checkbox");
 
-    // Set the initial state of the checkbox
-    taskCheckbox.checked = task.completed;
-
     // Add onchange event to the checkbox
     taskCheckbox.onchange = function (): void {
-        task.complete(taskCheckbox.checked);
-        updateTaskInLocalStorage(task, taskCheckbox.checked); // Update the task in localStorage when the checkbox is clicked
-        if (task.completed) {
+        if (taskCheckbox.checked) {
             li.style.color = "gray";
         }
         else {
             li.style.color = "black";
         }
     };
+
+    if (taskCheckbox.checked) {
+        li.style.color = "gray";
+    }
+    else {
+        li.style.color = "black";
+    }
 
     // Add the checkbox to the li
     li.appendChild(taskCheckbox);
@@ -126,18 +128,4 @@ function addTaskToWebpage(task: Task, index: number) {
     
     // Add the li to the ul
     ul.appendChild(li);
-}
-
-function updateTaskInLocalStorage(task: Task, completedStatus: Boolean): void {
-    const taskStorageKey: string = "Tasks";
-    let taskData: string | null = localStorage.getItem(taskStorageKey);
-    let tasks: Task[] = taskData ? JSON.parse(taskData) : [];
-    let taskIndex: number = tasks.findIndex(t => t.name === task.name); // Find the task by name
-    if (taskIndex !== -1) {
-        tasks[taskIndex] = task; // Update the task if it was found
-    }
-
-    taskData = JSON.stringify(tasks);
-
-    localStorage.setItem(taskStorageKey, taskData);
 }
