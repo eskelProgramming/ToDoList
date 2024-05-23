@@ -49,8 +49,10 @@ function addTaskToWebpage(task, index) {
     let taskCheckbox = document.createElement("input");
     taskCheckbox.setAttribute("type", "checkbox");
     taskCheckbox.classList.add("task-checkbox");
+    taskCheckbox.checked = task.completed;
     taskCheckbox.onchange = function () {
         task.complete(taskCheckbox.checked);
+        updateTaskInLocalStorage(task, taskCheckbox.checked);
         if (task.completed) {
             li.style.color = "gray";
         }
@@ -62,4 +64,15 @@ function addTaskToWebpage(task, index) {
     let taskNameNode = document.createTextNode(" " + task.name);
     li.appendChild(taskNameNode);
     ul.appendChild(li);
+}
+function updateTaskInLocalStorage(task, completedStatus) {
+    const taskStorageKey = "Tasks";
+    let taskData = localStorage.getItem(taskStorageKey);
+    let tasks = taskData ? JSON.parse(taskData) : [];
+    let taskIndex = tasks.findIndex(t => t.name === task.name);
+    if (taskIndex !== -1) {
+        tasks[taskIndex] = task;
+    }
+    taskData = JSON.stringify(tasks);
+    localStorage.setItem(taskStorageKey, taskData);
 }
